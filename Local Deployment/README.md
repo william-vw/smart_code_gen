@@ -13,7 +13,7 @@ If first time in UI:
 ## Run a test case
 
 ### 1) Compile & deploy contract
-- `sudo ./deploy_contract.sh <case>` (e.g., case 1)
+- `%> sudo ./deploy_contract.sh <case>` (e.g., case1)
 
 ### 2) Run client & oracle
 - `web3 % node oracle.js <test>` (e.g., test1)  
@@ -24,8 +24,6 @@ outputs the response received from the contract.
 
 `<test>` will be one of the tests under `web3/test/<case>/` (e.g., test1).  
 (NOTE: `oracle.js` and `client.js` will already be using the `<case>` from `deploy_contract.sh`)  
-
-
 
 See [`web3/test`](web3/test) for instructions on how to run all contract tests.
 
