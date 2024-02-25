@@ -1,7 +1,7 @@
 # Instructions
 
 ## Setup
-- Run `npm install` within main folder and [`web3/`](https://github.com/william-vw/smart_code_gen/Local+Deployment/web3) subfolder.
+- Run `npm install` within main folder and [`web3/`](web3/) subfolder.
 - Install [Ganache UI](https://trufflesuite.com/ganache/)  
 (UI allows checking issued events, which is not supported by ganache-cli)
 
@@ -27,7 +27,7 @@ outputs the response received from the contract.
 
 
 
-See [`web3/test`](https://github.com/william-vw/smart_code_gen/Local+Deployment/web3/test) for instructions on how to run all contract tests.
+See [`web3/test`](web3/test) for instructions on how to run all contract tests.
 
 <!-- ### Troubleshooting
 - When getting the following error when running `client.js`:
