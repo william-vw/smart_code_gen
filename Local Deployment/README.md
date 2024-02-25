@@ -1,14 +1,14 @@
 # Instructions
 
 ## Setup
-- Run `npm install` within main folder and [`web3/`](web3/) subfolder.
+- Run `npm install` within this folder and [`web3/`](web3/) subfolder.
 - Install [Ganache UI](https://trufflesuite.com/ganache/)  
 (UI allows checking issued events, which is not supported by ganache-cli)
 
 ## Run Ganache UI
 If first time in UI:
-- New workspace > Add project > select project's `contracts/truffle-config.js` > Start (right top)
-- Note port number & update `truffle-config.js` & `web3/*.js` (if needed)
+- New workspace > Add project > select `contract/truffle-config.js` > Start (button at right top)
+- Note port number ("RPC server" on top bar) & update `contract/truffle-config.js` (networks > development > port) & `web3/*.js` (if needed)
 
 ## Run a test case
 
