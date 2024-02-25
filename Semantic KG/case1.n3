@@ -1,0 +1,189 @@
+@prefix : <http://example.org/> .
+@prefix cg: <http://niche.cs.dal.ca/codegen.owl#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2000/10/swap/time#> .
+
+# Medication Coverage: Transplant/Immunosuppressive drugs
+
+# "you get immunosuppressive drugs"
+{
+   ?req a fhir:CoverageEligibilityRequest ;
+      fhir:purpose 'validation' ;
+      fhir:item ?med .
+   #
+   ?med a fhir:MedicationRequest .
+   ?med!fhir:medication fhir:concept "DBCAT005063" . # Immunotherapy (drugbank)
+}
+=> 
+{
+   ?req :immunoTherapyItem ?med
+}
+;
+   cg:functionParam ?req .
+
+ # "Medicare covers transplant drug therapy if Medicare helped pay for your organ transplant. 
+ # You must have Part A at the time of the covered transplant"
+{
+   ?req :immunoTherapyItem ?med ; fhir:patient ?p .
+   #
+    { ?claim a fhir:Claim ; fhir:subject ?p }
+      cg:request <http://myfhir.ca/> ; cg:join fhir:procedure , fhir:insurance .
+   # ?claim a fhir:Claim ; fhir:subject ?p .
+   #
+   ?claim fhir:procedure ?proc .
+   ?proc fhir:status 'completed' ;
+       fhir:code 77465005 . # Transplantation
+   # "You must have Part A at the time of the covered transplant"
+   ?claim fhir:insurance ?cov .
+   ?cov fhir:insurer :Medicare ;
+      fhir:class :PartA .
+}
+=> 
+{
+   ?med :eligibleTransplant ?proc .
+}
+;
+   cg:functionParam ?req .
+
+
+# "and you must have Part B at the time you get immunosuppressive drugs"
+# "Keep in mind, Medicare drug coverage (Part D) covers immunosuppressive drugs if Part B doesn’t cover them."
+{
+   ?req :immunoTherapyItem ?med ; fhir:patient ?p .
+   ?med :eligibleTransplant ?proc .
+    #
+   { ?cov a fhir:Coverage ; fhir:policyHolder ?p ; fhir:status 'active' }
+      cg:request <http://myfhir.ca/> .
+   #?cov a fhir:Coverage ; fhir:policyHolder ?p ; fhir:status 'active' .
+   #
+   ?cov fhir:insurer :Medicare ; fhir:class ?class . ?class list:in ( :PartB :PartD ) 
+}
+=> 
+{
+   # ?med :coveredImmunoTherapy true
+   # ?med :coveredImmunoTherapy ?cov
+   ?req :response 
+      [  a fhir:CoverageEligibilityResponse ; fhir:outcome 'complete' ; fhir:request ?med ; fhir:covered ?cov; fhir:patient ?p  ]
+}
+;
+   cg:functionParam ?req ; cg:event :ContractResponse .
+
+
+# # "If you only have Medicare because of End-Stage Renal Disease (ESRD), your Medicare coverage, 
+# # including immunosuppressive drug coverage, ends 36 months after a successful kidney transplant."
+# {
+#    ?req :immunoTherapyRequest ?med .
+#    # 
+#    ?req fhir:patient ?p .
+# 	 #
+# 	 ?cov a fhir:Coverage ;
+# 	 	fhir:policyHolder ?p .
+#    #
+#    # "Medicare because of End-Stage Renal Disease (ESRD)"
+#    ?cov a fhir:Coverage .
+#    ?cov fhir:insurer :Medicare .
+#    ?cov fhir:class :ESRD .
+#    #
+#    # # "your Medicare coverage [..] ends 36 months after a successful kidney transplant"
+#    ?med :coveredTransplant ?proc .
+#    ?proc fhir:occurrence ?procTime .
+#    ( ?procTime 93312000 ) math:sum ?procTimePlus36Months . # 36 months
+#    ?med!fhir:effectiveDosagePeriod fhir:end ?drugEnd .
+#    ?drugEnd math:notGreaterThan ?procTimePlus36Months .
+# }
+# => 
+# {
+#    ?med :coveredImmunoTherapy ?cov .
+
+# } ; cg:functionParam ?req .
+
+# # "you don’t have certain types of other health coverage (like a group health plan, TRICARE [..]"
+# {
+#    ?req :immunoTherapyRequest ?med ;
+#       fhir:patient ?p .
+
+#    ?otherCov a fhir:Coverage ;
+#          fhir:policyHolder ?p ;
+#          fhir:status 'active' .
+#    ?otherCov!fhir:insurer list:in ( :GroupHealthPlan :TRICARE ) .
+
+# } => {
+#    ?med :otherCoverage true 
+
+# } ; cg:functionParam ?req .
+
+# # "[..] or Medicaid that covers immunosuppressive drugs)"
+# {
+#    ?req :immunoTherapyRequest ?med ;
+#       fhir:patient ?p .
+
+#    ?otherCov a fhir:Coverage ;
+#       fhir:policyHolder ?p ;
+#       fhir:status 'active' .
+#    ?otherCov fhir:insurer :Medicaid ;
+#       fhir:class :Immunosuppressive_Drugs_for_Transplant .
+
+# } => {
+#    ?med :otherCoverage true 
+   
+# } ; cg:functionParam ?req .
+
+# # "Medicare offers a benefit that may help you, if you lose Part A coverage 36 months after a kidney transplant, 
+# # and you don’t have certain types of other health coverage (like a group health plan, TRICARE, or Medicaid that covers immunosuppressive drugs). 
+# # This benefit only covers your immunosuppressive drugs and no other items or services. 
+# # It isn’t a substitute for full health coverage.
+# # If you qualify, you can sign up for this benefit any time after your Part A coverage ends. 
+# # To sign up, call Social Security at 1-877-465-0355. TTY users can call 1-800-325-0788"
+# {
+#    ?req :immunoTherapyRequest ?med ;
+#       fhir:patient ?p .
+
+#    # # "you don’t have certain types of other health coverage (like a group health plan, TRICARE [..]"
+#    # # "[..] or Medicaid that covers immunosuppressive drugs)"
+
+#    <> log:notIncludes { ?med :otherCoverage ?x } .
+
+#    # "if you lose Part A coverage 36 months after a kidney transplant"
+#    # and, "you can sign up for this benefit any time after your Part A coverage ends"
+#    ?med :coveredTransplant ?proc .
+#    ?proc fhir:occurrence ?procTime .
+#    #
+#    ?cov a fhir:Coverage ;
+#        fhir:policyHolder ?p .
+#    ?cov fhir:insurer :Medicare .
+#    # (leaving out part A as that doesn't make a lot of sense)
+#    ?cov!fhir:period fhir:end ?covEnd .
+#    #
+#    ( ?procTime 93312000 ) math:sum ?procTimePlus36Months . # 36 months
+#    ?covEnd math:greaterThan ?procTimePlus36Months .
+# }
+# => 
+# {
+#    ?med :coveredImmunoTherapy true .
+# #    ?newCov a fhir:Coverage ;
+# #        fhir:policyHolder ?p ;
+# #        fhir:status 'draft' ;
+# #        fhir:insurer :Medicare ;
+# #        fhir:class ( :Only_Immunosuppressive_Drugs_for_Transplant ) ;
+# #        rdfs:comment """In 2023, you'll pay a monthly premium of $97.10* and $226 deductible if you sign up for the immunosuppressive drug benefit.
+# # Once you've met the deductible, you'll pay 20% of the Medicare-approved amount for your immunosuppressive drugs.""" .
+# #    ?req fhir:insurance ( ?newCov ) 
+# } ; cg:functionParam ?req .
+
+# # # # #
+# # # # {
+# # # #    ?p :coveredImmunoTherapy ?req .
+# # # # }
+# # # # => 
+# # # # {
+# # # #    [
+# # # #        a fhir:CoverageEligibilityResponse ;
+# # # #        fhir:patient ?p ;
+# # # #        fhir:request ?req ;
+# # # #        fhir:outcome 'complete' 
+# # # #    ]
+# # # } .

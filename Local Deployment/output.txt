@@ -1,0 +1,56 @@
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/case2.sol
+> Compilation warnings encountered:
+
+    Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> project:/contracts/case2.sol:116:18:
+    |
+116 | 	function check0(CoverageEligibilityRequest memory req, Dosage[] memory dosageInstructions) private pure returns (bool) {
+    | 	                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+,Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> project:/contracts/case2.sol:130:18:
+    |
+130 | 	function check1(CoverageEligibilityRequest memory req, Medication[] memory medications) private pure returns (bool) {
+    | 	                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+> Artifacts written to /Users/wvw/git/n3/blockiot-cds/smart_code_gen/Local Deployment/contract/build/contracts
+> Compiled successfully using:
+   - solc: 0.8.17+commit.8df45f5f.Emscripten.clang
+
+
+Starting migrations...
+======================
+> Network name:    'development'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+2_deploy_contracts.js
+=====================
+
+   Replacing 'case3'
+   -----------------
+   > transaction hash:    0x73fded109432cbf2579b7799a4d80db772ae07346c0e60b8e29540307119ce4a
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x4A7586dd1d235458Fd2C3B26d671231D940A48D5
+   > block number:        91
+   > block timestamp:     1708871696
+   > account:             0x8c842d810371603635139014B4394a159bfa42b6
+   > balance:             99.750934051112355131
+   > gas used:            2177616 (0x213a50)
+   > gas price:           2.500027406 gwei
+   > value sent:          0 ETH
+   > total cost:          0.005444099679744096 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.005444099679744096 ETH
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.005444099679744096 ETH

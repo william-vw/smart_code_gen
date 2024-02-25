@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "ganache-cli": "^6.12.2",
+    "hardhat": "^2.19.2",
+    "solc": "^0.8.22",
+    "truffle": "^5.11.5"
+  }
+}

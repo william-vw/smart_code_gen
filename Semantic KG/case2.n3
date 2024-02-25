@@ -1,0 +1,88 @@
+@prefix : <http://example.org/> .
+@prefix cg: <http://niche.cs.dal.ca/codegen.owl#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2000/10/swap/time#> .
+
+
+# Medication Coverage: Intravenous Immune Globulin
+{
+   ?req a fhir:CoverageEligibilityRequest ;
+       fhir:status 'active' ;
+       fhir:patient ?p .
+   #
+   ?req fhir:purpose 'validation' .
+   #
+   # "you have a diagnosis of primary immune deficiency disease"
+   ?cond a fhir:Condition ;
+       fhir:clinicalStatus 'active' ;
+       fhir:code 58606001 ; #  Primary immune deficiency disorder (SNOMED-CT)
+       fhir:subject ?p .
+}
+=> 
+{
+   ?req :immuneDeficiencyDisease ?cond 
+}
+;
+   cg:functionParam ?req .
+
+#
+{
+   ?req a fhir:CoverageEligibilityRequest ;
+       fhir:patient ?p ;
+       fhir:provider ?pract .
+   #
+   ?req fhir:item ?med .
+   #
+   ?req :immuneDeficiencyDisease ?cond .
+
+   # " Medicare covers IVIG"
+   ?med a fhir:MedicationRequest .
+   ?med fhir:reason ?cond .
+   ?med fhir:subject ?p .
+   ?med!fhir:medication fhir:concept 243196004 . # Immunoglobulin desensitization therapy
+   ?med fhir:dosageInstruction ?dosage .
+   ?dosage a fhir:Dosage ;
+       fhir:route 255560000 ; # Intravenous
+       fhir:requester ?pract ;
+       # "your doctor decides that it’s medically appropriate for you to get the IVIG in your home"
+       fhir:performer ?p ;
+       fhir:method 385985008 # Home related procedures (regime/therapy)
+}
+=> 
+{
+   ?req :ivigDrugItem ?med .
+}
+;
+   cg:functionParam ?req .
+
+#
+{
+   ?req a fhir:CoverageEligibilityRequest ;
+       fhir:patient ?p .
+   ?req fhir:item ?med .
+   ?req :ivigDrugItem ?med .
+
+   #
+   # "Part B covers the IVIG itself"
+   { ?cov a fhir:Coverage ; fhir:policyHolder ?p }
+   		cg:request <http://myfhir.ca/> .
+   ?cov fhir:insurer :Medicare .
+   ?cov fhir:class :PartB .
+   #
+}
+=> 
+{
+   ?req :response [
+       a fhir:CoverageEligibilityResponse ;
+       fhir:outcome 'complete' ;
+       fhir:request ?med ;
+       fhir:patient ?p ;
+       fhir:covered ?cov 
+   ] 
+}
+;
+   cg:functionParam ?req ; cg:event :ContractResponse .

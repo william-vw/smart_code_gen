@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "alchemy-sdk": "^3.1.0",
+    "bignumber.js": "^9.1.2",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "fs.promises": "^0.1.2",
+    "ganache": "^7.9.1",
+    "web3": "^4.3.0"
+  }
+}

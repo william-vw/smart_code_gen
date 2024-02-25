@@ -1,0 +1,308 @@
+@prefix : <http://hl7.org/fhir/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://hl7.org/fhir/> .
+
+<http://hl7.org/fhir/> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://hl7.org/fhir/item
+:item rdf:type owl:ObjectProperty ;
+      rdfs:range :DomainResource ;
+      owl:inverseOf :itemOf .
+
+:itemOf rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+      rdfs:range :DomainResource ;
+	  owl:inverseOf :item .
+
+
+###  http://hl7.org/fhir/medication
+:medication rdf:type owl:ObjectProperty ;
+            rdfs:range :Medication .
+
+
+###  http://hl7.org/fhir/patient
+:patient rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Patient ;
+         owl:inverseOf :patientOf .
+         
+:provider rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Practitioner ;
+         owl:inverseOf :providerOf .
+
+:providerOf rdf:type owl:ObjectProperty ;
+         owl:inverseOf :provider .
+
+:subject rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Patient ;
+         owl:inverseOf :subjectOf .
+         
+:subjectOf rdf:type owl:ObjectProperty ;
+         owl:inverseOf :subject .
+         
+:policyHolder rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Patient ;
+         owl:inverseOf :policyHolderOf .
+         
+:policyHolderOf rdf:type owl:ObjectProperty ;
+         owl:inverseOf :policyHolder .
+
+:procedure rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Procedure .
+
+:insurance rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Insurance .
+
+:insurer rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Insurer .
+         
+:class rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Class .
+         
+ :request rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:domain :CoverageEligibilityResponse ;
+         rdfs:range :MedicationRequest ;
+         owl:inverseOf :requestOf .
+         
+:requestOf rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:domain :MedicationRequest ;
+         rdfs:range :CoverageEligibilityResponse ;
+         owl:inverseOf :request .
+         
+:currentCoverage rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:domain :CoverageEligibilityResponse ;
+         rdfs:range :Coverage .
+         
+:outcome rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty .
+        
+<http://example.org/immunoTherapyItem> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :MedicationRequest .
+	
+	
+<http://example.org/immunoTherapyItemOf> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :MedicationRequest ;
+	rdfs:range :CoverageEligibilityRequest .                                                  
+
+<http://example.org/eligibleTransplant> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+    rdfs:domain :MedicationRequest ;
+    rdfs:range :Procedure ;                                               
+	owl:inverseOf <http://example.org/eligibleTransplantOf> . 
+
+<http://example.org/coveredTransplantOf> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :Procedure ;
+    rdfs:range :MedicationRequest ;
+	owl:inverseOf <http://example.org/coveredTransplant> .
+		
+
+<http://example.org/coveredImmunoTherapyOf> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :Coverage ;
+	rdfs:range :MedicationRequest ;
+	owl:inverseOf <http://example.org/coveredImmunoTherapy> .
+	
+
+<http://example.org/response> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :CoverageEligibilityResponse .
+	
+	
+:effectiveDosagePeriod rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Period .
+
+:period rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Period .
+         
+:reason rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Condition .
+
+:covered rdf:type owl:ObjectProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range :Coverage .
+         
+
+<http://example.org/pmOsteo> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :Condition ;
+	owl:inverseOf <http://example.org/pmOsteoOf>. 
+         
+         
+<http://example.org/pmOsteoOf> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :Condition ;
+	rdfs:range :CoverageEligibilityRequest ;
+	owl:inverseOf <http://example.org/pmOsteo> .
+	
+	
+<http://example.org/osteoBoneFracture> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :Condition ;
+	owl:inverseOf <http://example.org/osteoBoneFractureOf>.
+	
+	
+<http://example.org/osteoBoneFractureOf> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :Condition ;
+	rdfs:range :CoverageEligibilityRequest ;
+	owl:inverseOf <http://example.org/osteoBoneFracture>. 
+	
+
+<http://example.org/osteoDrugItem> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :MedicationRequest .
+	
+	
+	
+<http://example.org/immuneDeficiencyDisease> rdf:type owl:ObjectProperty ,
+                                                   owl:FunctionalProperty ;
+	
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :Condition .
+	
+
+<http://example.org/ivigDrugItem> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :CoverageEligibilityRequest ;
+	rdfs:range :MedicationRequest .
+	
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://hl7.org/fhir/concept
+:concept rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+
+
+###  http://hl7.org/fhir/purpose
+:purpose rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+         
+:status rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+         
+:clinicalStatus rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+         
+:verificationStatus rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+         
+:gender rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .
+         
+:code rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:string .     
+         
+:occurrence rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:integer .
+         
+:end rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:integer .
+         
+:route rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:integer .
+         
+:method rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:range xsd:integer .
+                
+         
+<http://example.org/coveredImmunoTherapy> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :MedicationRequest ;
+	rdfs:range :Coverage ;
+	#rdfs:range xsd:boolean ;
+	owl:inverseOf <http://example.org/coveredImmunoTherapyOf> .                
+	
+	
+<http://example.org/otherCoverage> rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+	rdfs:domain :MedicationRequest ;
+	rdfs:range xsd:boolean .          
+ 
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://hl7.org/fhir/CoverageEligibilityRequest
+:CoverageEligibilityRequest rdf:type owl:Class ;
+                            rdfs:subClassOf :DomainResource .
+
+
+###  http://hl7.org/fhir/DomainResource
+:DomainResource rdf:type owl:Class .
+
+
+###  http://hl7.org/fhir/Medication
+:Medication rdf:type owl:Class ;
+            rdfs:subClassOf :DomainResource .
+
+
+###  http://hl7.org/fhir/MedicationRequest
+:MedicationRequest rdf:type owl:Class ;
+                   rdfs:subClassOf :DomainResource .
+
+
+###  http://hl7.org/fhir/Patient
+:Patient rdf:type owl:Class ;
+         rdfs:subClassOf :DomainResource .
+
+:Insurer rdf:type owl:Class .
+:Medicare rdf:type owl:Class ;
+	rdfs:subClassOf :Insurer .
+
+:Class rdf:type owl:Class .
+:PartA rdf:type owl:Class ;
+	rdfs:subClassOf :Class .
+:PartB rdf:type owl:Class ;
+	rdfs:subClassOf :Class .
+:PartC rdf:type owl:Class ;
+	rdfs:subClassOf :Class .
+:PartD rdf:type owl:Class ;
+	rdfs:subClassOf :Class .
+:HomeHealthBenefit rdf:type owl:Class ;
+	rdfs:subClassOf :Class .
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

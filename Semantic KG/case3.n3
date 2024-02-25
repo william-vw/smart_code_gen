@@ -1,0 +1,97 @@
+@prefix : <http://example.org/> .
+@prefix cg: <http://niche.cs.dal.ca/codegen.owl#> .
+@prefix fhir: <http://hl7.org/fhir/> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2000/10/swap/time#> .
+
+
+# Medicare will cover injectable osteoporosis drugs if the patient is a woman meeting the criteria for the home health benefit, suffering from a bone fracture due to postmenopausal osteoporosis, and cannot self-inject.
+# Medicare may cover a home health nurse to provide the injection.
+
+#
+{
+    # "[..] with osteoporosis"
+    # "[..] was related to post-menopausal osteoporosis"
+    ?req a fhir:CoverageEligibilityRequest ;
+        fhir:patient ?p .
+
+    ?cond a fhir:Condition ;
+        fhir:subject ?p ;
+        fhir:clinicalStatus 'active' ;
+        fhir:code 102447009 . # Postmenopausal osteoporosis (SNOMED-CT)
+} 
+=> 
+{
+    ?req :pmOsteo ?cond
+	#?cond :pmOsteoOf ?req
+
+} ; cg:functionParam ?req .
+
+#
+{
+    ?req a fhir:CoverageEligibilityRequest ;
+        fhir:patient ?p .
+
+    # "You have a bone fracture that a doctor certifies was related to post-menopausal osteoporosis."
+   ?cond a fhir:Condition ;
+       fhir:subject ?p ;
+       fhir:clinicalStatus 'active' ;
+       fhir:verificationStatus 'confirmed' ;
+       fhir:code 443165006 . # Osteoporotic fracture of bone (SNOMED-CT)
+}
+=>
+{
+    #?cond :osteoBoneFractureOf ?req .
+    ?req :osteoBoneFracture ?cond .
+
+} ; cg:functionParam ?req .
+
+
+# Medication Coverage: Injectable Osteoporosis Drugs
+{
+   ?req a fhir:CoverageEligibilityRequest ;
+       fhir:patient ?p ;
+       fhir:provider ?pract .
+   ?req fhir:purpose 'validation' .
+   
+   # "You’re a woman [..]"
+   ?p fhir:gender 'female' .
+   
+   ?req :pmOsteo ?cond1 .
+   ?req :osteoBoneFracture ?cond2 .
+   
+   ?req fhir:item ?med .
+
+#    # "Medicare covers injectable osteoporosis drugs [..]"
+   ?med a fhir:MedicationRequest .
+   ?med fhir:reason ?cond1 .
+   ?med fhir:subject ?p .
+   ?med!fhir:medication fhir:concept 398823001 . #  Product containing teriparatide (SNOMED-CT)
+#    ?med fhir:dosageInstruction ?dosage .
+
+} => {
+	?req :osteoDrugItem ?med .
+
+}  ; cg:functionParam ?req .
+
+{
+	?req :osteoDrugItem ?med ;
+		fhir:patient ?p .
+   #
+#   ?cov a fhir:Coverage ; fhir:policyHolder ?p .
+    { ?cov a fhir:Coverage ; fhir:policyHolder ?p } 
+        cg:request <http://myfhir.ca/> .
+
+   ?cov fhir:insurer :Medicare .
+   # "[..] who meets the criteria for the Medicare home health benefit"
+   ?cov!fhir:class list:in ( :PartB :HomeHealthBenefit ) .
+}
+=> 
+{
+    ?req :response 
+      [  a fhir:CoverageEligibilityResponse ; fhir:outcome 'complete' ; fhir:request ?med ; fhir:patient ?p ; fhir:covered ?cov ]
+
+} ; cg:functionParam ?req ; cg:event :ContractResponse .
