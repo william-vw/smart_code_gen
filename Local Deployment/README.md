@@ -1,8 +1,9 @@
 # Instructions
 
 ## Setup
+- Install [nodejs](https://nodejs.org/en).
 - Run `npm install` within this folder and [`web3/`](web3/) subfolder.
-- Install [Ganache UI](https://trufflesuite.com/ganache/)  
+- Install [Ganache UI](https://trufflesuite.com/ganache/).  
 (UI allows checking issued events, which is not supported by ganache-cli)
 
 ## Run Ganache UI
