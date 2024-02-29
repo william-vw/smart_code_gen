@@ -9,6 +9,6 @@
 
 ## Instructions
 
-Due to latency issues with the Sepolia testnet we've written comprehensive instructions on how to deploy and test the smart contracts on your local machine.
+Due to latency issues with the Sepolia testnet, we've written comprehensive instructions on how to locally deploy and test the smart contracts.
 
 See [`Local Deployment`](<Local Deployment/>) for instructions.
